@@ -1,0 +1,8 @@
+.vs/
+/Bin/
+Intermediate/
+/Lib/
+*.vcxproj.user
+*sqlite
+ConsoleApp1/obj
+ConsoleApp1/bin
