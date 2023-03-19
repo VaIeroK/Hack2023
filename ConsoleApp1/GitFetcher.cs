@@ -116,11 +116,11 @@ namespace Test
         public void FlushUiToDB(SQLiteConnection connect, string user)
         {
             User gituser = ReadDB(connect, user, false);
-            DB.RunQuery(connect, "CREATE TABLE IF NOT EXISTS GitHubUiUsers (AuthorName TEXT, CommitsInMonth INT, CommitDate BIGINT);");
+            DB.RunQuery(connect, "CREATE TABLE IF NOT EXISTS GitHubUsers_Ui (AuthorName TEXT, CommitsInMonth INT, CommitDate BIGINT);");
 
             for (int i = 0; i < gituser.WorkState.Count; i++)
             {
-                DB.RunQuery(connect, $"INSERT INTO GitHubUiUsers VALUES('{gituser.WorkState[i].UserName}', {gituser.WorkState[i].WorkDays}, {(new DateTimeOffset(gituser.WorkState[i].Year, gituser.WorkState[i].Month, 1, 1, 1, 1, new TimeSpan())).ToUnixTimeSeconds()});");
+                DB.RunQuery(connect, $"INSERT INTO GitHubUsers_Ui VALUES('{gituser.WorkState[i].UserName}', {gituser.WorkState[i].WorkDays}, {(new DateTimeOffset(gituser.WorkState[i].Year, gituser.WorkState[i].Month, 1, 1, 1, 1, new TimeSpan())).ToUnixTimeSeconds()});");
             }
         }
 

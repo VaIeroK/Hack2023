@@ -21,11 +21,13 @@ namespace Test
                 Directory.CreateDirectory("data");
 
             new GitFetcher().FlushToDB(sqlite_conn, "VaIeroK", "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", new List<string>() { "ui" });
+            DB.RunQuery(sqlite_conn, $"DROP TABLE GitHubUsers;");
 
             foreach (string file in Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "data"), "*.json"))
             {
                 new TelegramFetcher().FlushToDB(sqlite_conn, file);
                 CalculateState.CreateBD(sqlite_conn, CalculateState.Calculate(sqlite_conn, $"Telegram_{Path.GetFileNameWithoutExtension(file)}"), $"Telegram_{Path.GetFileNameWithoutExtension(file)}_Ui");
+                DB.RunQuery(sqlite_conn, $"DROP TABLE Telegram_{Path.GetFileNameWithoutExtension(file)};");
             }
 
             Console.WriteLine("End");
