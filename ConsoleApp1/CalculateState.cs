@@ -90,7 +90,8 @@ namespace Test
             }
 
             YoutrackFetcher work = new YoutrackFetcher();
-            work.ReadFile("C:\\utrack.csv", people);
+            foreach (string file in Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "data"), ".csv"))
+                work.ReadFile(file, people);
             return people;
         }
 

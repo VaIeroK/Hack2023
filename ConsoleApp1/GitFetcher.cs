@@ -24,12 +24,14 @@ namespace Test
             public int Month;
             public int Year;
             public int WorkDays;
+            public string UserName;
 
-            public MonthWorkState(int Month, int Year, int WorkDays)
+            public MonthWorkState(string User, int Month, int Year, int WorkDays)
             {
                 this.Month = Month;
                 this.Year = Year;
                 this.WorkDays = WorkDays;
+                this.UserName = User;
             }
         }
 
@@ -37,11 +39,13 @@ namespace Test
         {
             public string CommitDescr;
             public DateTime CommitDate;
+            public string CommitAuthor;
 
-            public Commit(string CommitDescr, DateTime CommitDate)
+            public Commit(string Author, string CommitDescr, DateTime CommitDate)
             {
                 this.CommitDate = CommitDate;
                 this.CommitDescr = CommitDescr;
+                this.CommitAuthor = Author;
             }
         }
 
@@ -109,27 +113,25 @@ namespace Test
             Console.WriteLine("Finish Insert!");
         }
 
-        public void FlushUiToDB(SQLiteConnection connect, string User)
+        public void FlushUiToDB(SQLiteConnection connect, string user)
         {
-            User gituser = new GitFetcher().ReadDB(connect, User);
-
+            User gituser = ReadDB(connect, user, false);
             DB.RunQuery(connect, "CREATE TABLE IF NOT EXISTS GitHubUiUsers (AuthorName TEXT, CommitsInMonth INT, CommitDate BIGINT);");
 
             for (int i = 0; i < gituser.WorkState.Count; i++)
             {
-                Console.WriteLine("111");
-                DB.RunQuery(connect, $"INSERT INTO GitHubUiUsers VALUES('{User}', {gituser.WorkState[i].WorkDays}, {(new DateTimeOffset(gituser.WorkState[i].Year, gituser.WorkState[i].Month, 1, 1, 1, 1, new TimeSpan())).ToUnixTimeSeconds()}");
+                DB.RunQuery(connect, $"INSERT INTO GitHubUiUsers VALUES('{gituser.WorkState[i].UserName}', {gituser.WorkState[i].WorkDays}, {(new DateTimeOffset(gituser.WorkState[i].Year, gituser.WorkState[i].Month, 1, 1, 1, 1, new TimeSpan())).ToUnixTimeSeconds()});");
             }
         }
 
-        public User ReadDB(SQLiteConnection connection, string UserName)
+        public User ReadDB(SQLiteConnection connection, string UserName, bool use_where = true)
         {
             User user = new User();
             user.UserName = UserName;
 
-            List<List<string>> values = DB.ReadData(connection, "GitHubUsers", 3, $"AuthorName = '{UserName}'");
+            List<List<string>> values = DB.ReadData(connection, "GitHubUsers", 3, use_where ? $"AuthorName = '{UserName}'" : null);
             for (int i = 0; i < values.Count; i++)
-                user.Commits.Add(new Commit(values[i][1], DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(values[i][2])).DateTime));
+                user.Commits.Add(new Commit(values[i][0], values[i][1], DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(values[i][2])).DateTime));
 
             DateTime currentDate = DateTime.Now;
             DateTime currentMonth = new DateTime(1970, 1, 1);
@@ -151,7 +153,7 @@ namespace Test
                         Dates.Add(new DateTime(monthDates[j].CommitDate.Year, monthDates[j].CommitDate.Month, monthDates[j].CommitDate.Day));
 
                     int WorkdaysInMonth = Dates.Distinct().Where(d => d.Year == monthDates[0].CommitDate.Year && d.Month == monthDates[0].CommitDate.Month).Count();
-                    user.WorkState.Add(new MonthWorkState(monthDates[0].CommitDate.Month, monthDates[0].CommitDate.Year, WorkdaysInMonth));
+                    user.WorkState.Add(new MonthWorkState(monthDates[0].CommitAuthor, monthDates[0].CommitDate.Month, monthDates[0].CommitDate.Year, WorkdaysInMonth));
                 }
 
                 currentMonth = currentMonth.AddMonths(1);

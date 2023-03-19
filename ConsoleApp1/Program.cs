@@ -12,31 +12,19 @@ namespace Test
 {
     internal class Program
     {
-        private static string[] TelegramDataBases =
-        {
-            "C:\\hotger.json", "C:\\delivery.json", "C:\\gigi.json", "C:\\hotfix1.json", "C:\\result.json"
-        };
-
         static void Main(string[] args)
         {
             SQLiteConnection sqlite_conn;
             sqlite_conn = DB.CreateConnection();
 
-            new GitFetcher().FlushToDB(sqlite_conn, "VaIeroK", "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", new List<string>() { "ui" });
-            GitFetcher.User gituser = new GitFetcher().ReadDB(sqlite_conn, "VaIeroK");
+            new GitFetcher().FlushToDB(sqlite_conn, "VaIeroK", "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", new List<string>() { "ui" });
 
-            foreach (string json in TelegramDataBases)
+            foreach (string file in Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "data"), ".telegram.json"))
             {
-                new TelegramFetcher().FlushToDB(sqlite_conn, json);
-                CalculateState.CreateBD(sqlite_conn, CalculateState.Calculate(sqlite_conn, $"Telegram_{Path.GetFileNameWithoutExtension(json)}"), $"Telegram_{Path.GetFileNameWithoutExtension(json)}_Ui");
+                new TelegramFetcher().FlushToDB(sqlite_conn, file);
+                CalculateState.CreateBD(sqlite_conn, CalculateState.Calculate(sqlite_conn, $"Telegram_{Path.GetFileNameWithoutExtension(file)}"), $"Telegram_{Path.GetFileNameWithoutExtension(file)}_Ui");
             }
-            
-            //GitFetcher.User gituser = new GitFetcher().ReadDB(sqlite_conn, "kcat");
-            
-            //// Git
-            //for (int i = 0; i < gituser.WorkState.Count; i++)
-            //    Console.WriteLine($"{new DateTime(gituser.WorkState[i].Year, gituser.WorkState[i].Month, 1).ToShortDateString()}: Проработано дней {gituser.WorkState[i].WorkDays} из {DateTime.DaysInMonth(gituser.WorkState[i].Year, gituser.WorkState[i].Month)}");
-            
+
             Console.WriteLine();
 
             Console.WriteLine("End");
