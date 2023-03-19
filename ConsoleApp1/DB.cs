@@ -12,6 +12,14 @@ namespace Test
         static public SQLiteConnection CreateConnection()
         {
             SQLiteConnection sqlite_conn;
+
+            try
+            {
+                if (File.Exists("database.db"))
+                    File.Delete("database.db");
+            }
+            catch  { }
+
             sqlite_conn = new SQLiteConnection("Data Source=database.db; Version=3; New=True; Compress=True; ");
             try
             {
