@@ -25,12 +25,12 @@ namespace Test
                 while (reader.Read())
                 {
                     double goodRep = 0;
-                    int goodCommunication = 0;
-                    int evilCommunication = 0;
+                    double goodCommunication = 0;
+                    double evilCommunication = 0;
 
                     double badRep = 0;
-                    int maxEffective = 0;
-                    int lowEffcitve = 0;
+                    double maxEffective = 0;
+                    double lowEffcitve = 0;
 
                     string message = reader.GetValue(3).ToString().ToLower();
                     string name = reader.GetValue(2).ToString();
@@ -85,6 +85,16 @@ namespace Test
                         }
                     }
 
+
+                    for (int i = 0; i < Filter.NeutralFiltre.Length; i++)
+                    {
+                        if (message.Contains(Filter.NeutralFiltre[i].ToLower()))
+                        {
+                            maxEffective+=0.01;
+                            goodCommunication += 0.01;
+                        }
+                    }
+
                     AddStat(people, goodRep, badRep, goodCommunication - evilCommunication, maxEffective - lowEffcitve, name);
                 }
             }
@@ -122,7 +132,7 @@ namespace Test
             return readyList;
         }
 
-        static void AddStat(List<Person> list, double goodRep, double badRep, int styleCommunication, int effectivePerson, string name)
+        static void AddStat(List<Person> list, double goodRep, double badRep, double styleCommunication, double effectivePerson, string name)
         {
             foreach (Person person in list)
             {
@@ -178,6 +188,9 @@ namespace Test
                 {
                     tag += " Недорабатывает ";
                 }
+
+                if (tag.Length == 0)
+                    tag = " Неактивен ";
 
                 DB.RunQuery(connection, $"INSERT INTO {tg_chat} VALUES ({i}, '{people[i].name}', '{tag}', '{people[i].plusRep}', '{people[i].minusRep}' ,'{people[i].totalRep}' );");
             }

@@ -20,8 +20,8 @@ namespace Test
         public double totalRep = 0;
 
 
-        public int activeInchat = 0;
-        public int typeCommunecation = 0;
+        public double activeInchat = 0;
+        public double typeCommunecation = 0;
 
         public int overwork = 0;
     }

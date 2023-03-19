@@ -20,7 +20,7 @@ namespace Test
             if (!Directory.Exists("data"))
                 Directory.CreateDirectory("data");
 
-            new GitFetcher().FlushToDB(sqlite_conn, "koplenov", "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", new List<string>() { "gitly" });
+            new GitFetcher().FlushToDB(sqlite_conn, "koplenov", "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", new List<string>() { "gitly" });
             DB.RunQuery(sqlite_conn, $"DROP TABLE GitHubUsers;");
 
             foreach (string file in Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "data"), "*.json"))
