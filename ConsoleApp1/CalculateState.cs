@@ -149,7 +149,7 @@ namespace Test
 
         static public void CreateBD(SQLiteConnection connection, List<Person> people, string tg_chat, string way = "database.db")
         {
-            DB.RunQuery(connection, $"CREATE TABLE IF NOT EXISTS {tg_chat} (tg_user_id INT, tg_user_name TEXT, criteria TEXT, plus_stat INT, minus_stat INT, work_percent DECIMAL(4.2));");
+            DB.RunQuery(connection, $"CREATE TABLE IF NOT EXISTS {tg_chat} (tg_user_id INT, tg_user_name TEXT, criteria TEXT, plus_stat DECIMAL(8.2), minus_stat DECIMAL(8.2), work_percent DECIMAL(4.2));");
             DB.RunQuery(connection, $"DELETE From {tg_chat}");
 
             for (int i = 0; i < people.Count; i++)
