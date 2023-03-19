@@ -17,6 +17,9 @@ namespace Test
             SQLiteConnection sqlite_conn;
             sqlite_conn = DB.CreateConnection();
 
+            if (!Directory.Exists("data"))
+                Directory.CreateDirectory("data");
+
             new GitFetcher().FlushToDB(sqlite_conn, "VaIeroK", "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", new List<string>() { "ui" });
 
             foreach (string file in Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, "data"), ".telegram.json"))
@@ -25,10 +28,7 @@ namespace Test
                 CalculateState.CreateBD(sqlite_conn, CalculateState.Calculate(sqlite_conn, $"Telegram_{Path.GetFileNameWithoutExtension(file)}"), $"Telegram_{Path.GetFileNameWithoutExtension(file)}_Ui");
             }
 
-            Console.WriteLine();
-
             Console.WriteLine("End");
-            Console.ReadKey();
 
             sqlite_conn.Close();
         }
